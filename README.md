@@ -1,2 +1,2 @@
-# ambience-generator
+# ambiance-generator
 school project
