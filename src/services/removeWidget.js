@@ -5,7 +5,7 @@ export const removeWidget = widget => {
   return new Promise((resolve, reject) => {
     widget.forEach(sensor => {
       try {
-        removeSensor(sensor).then(e => console.log('remove sensor'));
+        removeSensor(sensor).then(e => console.log('sensor is removed'));
       } catch (e) {
         reject(e);
         console.log(e);

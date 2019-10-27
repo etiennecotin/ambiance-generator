@@ -17,10 +17,8 @@
       :playSound="playSound"
       v-if="getSensorSwitch && showSwitch"
     ></switch-sensor>
-    
-    <b-button href="#" variant="primary" @click="removeSensor(sensor)"
-      >remove</b-button
-    >
+
+    <b-button href="#" variant="primary" @click="removeSensor">remove</b-button>
   </b-card>
 </template>
 
@@ -77,7 +75,7 @@ export default {
   },
   methods: {
     async removeSensor() {
-      console.log("remove sensor");
+      console.log("remove widget");
       await socket.client.subscribe(`${this.$store.getters.devEui}-out/#`);
       removeWidget(this.sensorGroup).then(() =>
         this.$store.dispatch("removeWidget", this.indexGroup)

@@ -59,7 +59,9 @@ socket.initSocket = async () => {
       const treatedTopic = analyseTopic(topic);
 
       // EventBus.$emit("mqttMessage", { treatedTopic, message });
-      store.dispatch("updateState", { treatedTopic, message });
+      if (treatedTopic.request === 1) {
+        store.dispatch("updateState", { treatedTopic, message });
+      }
     });
 
     socket.client.on("connect", async state => {
