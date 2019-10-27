@@ -49,10 +49,10 @@ export default {
       );
       await socket.client.publish(
         `${this.$store.getters.devEui}-out/0/3306/${sensorLength}/3/5850`,
-        0
+        JSON.stringify(0)
       );
       await this.$store.dispatch("getFullState");
-      await socket.client.subscribe(`69b970dd549d56c619e1ed9223dedaf2-out/0/#`);
+      await socket.client.subscribe(`${this.$store.getters.devEui}-out/0/#`);
     }
   }
 };
