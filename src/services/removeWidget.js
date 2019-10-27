@@ -2,12 +2,16 @@ import socket from "./MqttClient";
 import store from "../store";
 
 export const removeWidget = widget => {
-  widget.forEach(sensor => {
-    try {
-      removeSensor(sensor).then(e => console.log(e));
-    } catch (e) {
-      console.log(e);
-    }
+  return new Promise((resolve, reject) => {
+    widget.forEach(sensor => {
+      try {
+        removeSensor(sensor).then(e => console.log('remove sensor'));
+      } catch (e) {
+        reject(e);
+        console.log(e);
+      }
+    });
+    resolve(true);
   });
 };
 

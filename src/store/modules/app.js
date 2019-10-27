@@ -78,6 +78,9 @@ const actions = {
         commit("updateSwitch", { treatedTopic, message });
         break;
     }
+  },
+  removeWidget({state, commit}, widgetNode) {
+    commit("removeWidget", widgetNode);
   }
 };
 
@@ -95,17 +98,22 @@ const mutations = {
     state.sensors = params.nodes;
   },
   updateAudio(state, params) {
-    // state.sensors.fil
-    // console.log(state.sensors[params.treatedTopic.nativeNodeId]);
     const sensor = state.sensors[params.treatedTopic.nativeNodeId].find(el => {
-      console.log(el)
       return el.nativeType == params.treatedTopic.type;
     });
-    console.log(sensor);
     sensor.resources[params.treatedTopic.resource] = {
       data: Array.from(params.message),
       type: "Buffer"
     };
+  },
+  updateSwitch(state, params) {
+    const sensor = state.sensors[params.treatedTopic.nativeNodeId].find(el => {
+      return el.nativeType == params.treatedTopic.type;
+    });
+    sensor.resources[params.treatedTopic.resource] = !sensor.resources[params.treatedTopic.resource]
+  },
+  removeWidget(state, widgetNode) {
+    state.sensors.splice(widgetNode, 1);
   }
 };
 
