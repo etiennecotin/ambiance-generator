@@ -8,7 +8,5 @@ export const treat = sensorList => {
     }
     return acc;
   }, []);
-  return node.filter(el => {
-    return el != null;
-  });
+  return node
 };

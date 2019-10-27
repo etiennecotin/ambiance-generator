@@ -15,7 +15,10 @@ const state = {
 // getters
 const getters = {
   isAuthenticate: state => state.loaded,
-  allSensors: state => state.sensors,
+  allSensors: state =>
+    state.sensors.filter(el => {
+      return el != null;
+    }),
   devEui: state => state.devEui
 };
 // actions
@@ -79,7 +82,7 @@ const actions = {
         break;
     }
   },
-  removeWidget({state, commit}, widgetNode) {
+  removeWidget({ state, commit }, widgetNode) {
     commit("removeWidget", widgetNode);
   }
 };
@@ -110,7 +113,9 @@ const mutations = {
     const sensor = state.sensors[params.treatedTopic.nativeNodeId].find(el => {
       return el.nativeType == params.treatedTopic.type;
     });
-    sensor.resources[params.treatedTopic.resource] = !sensor.resources[params.treatedTopic.resource]
+    sensor.resources[params.treatedTopic.resource] = !sensor.resources[
+      params.treatedTopic.resource
+    ];
   },
   removeWidget(state, widgetNode) {
     state.sensors.splice(widgetNode, 1);
