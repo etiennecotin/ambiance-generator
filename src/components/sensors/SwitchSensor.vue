@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import socket from "../../services/MqttClient";
+
 export default {
   name: "SwitchSensor",
   props: {
@@ -13,13 +15,22 @@ export default {
       default: null
     }
   },
+  data() {
+    return {
+      switchValue: false
+    };
+  },
+  mounted() {
+    this.initSwitch();
+  },
   computed: {
-    switchState() {
-      const resource = this.sensor.resources[this.sensor.resource];
-      if (resource) {
-        return resource;
+    switchState: {
+      get: function() {
+        return this.switchValue;
+      },
+      set: function(val) {
+        this.switchValue = val;
       }
-      return false;
     },
     getSensorIcon() {
       let icon;
@@ -32,8 +43,34 @@ export default {
     }
   },
   methods: {
-    changeSwitchState() {
-      this.sensor.resources[this.sensor.resource] = !this.switchState;
+    initSwitch() {
+      if (this.sensor && this.sensor.resources[this.sensor.resource]) {
+        this.switchState = this.sensor.resources[this.sensor.resource];
+      } else {
+        this.switchState = false;
+      }
+    },
+    async changeSwitchState() {
+      console.log(
+        "update sensor switch topic => ",
+        `${this.$store.getters.devEui}-out/1/${this.sensor.type}/${this.sensor.nativeNodeId}/${this.sensor.nativeSensorId}/${this.sensor.resource}`
+      );
+      await socket.client.subscribe(
+        `${this.$store.getters.devEui}-out/1/${this.sensor.type}/${this.sensor.nativeNodeId}/${this.sensor.nativeSensorId}/${this.sensor.resource}`
+      );
+      await socket.client.publish(
+        `${this.$store.getters.devEui}-out/1/${this.sensor.type}/${this.sensor.nativeNodeId}/${this.sensor.nativeSensorId}/${this.sensor.resource}`,
+        JSON.stringify(!this.switchState)
+      );
+    }
+  },
+  watch: {
+    sensor: {
+      handler(val) {
+        this.switchState = val.resources[val.resource];
+      },
+      deep: true,
+      immediate: true
     }
   }
 };

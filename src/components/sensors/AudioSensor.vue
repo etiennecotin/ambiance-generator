@@ -1,12 +1,6 @@
 <template>
   <div>
-    <b-button
-      href="#"
-      variant="primary"
-      :disabled="!canPlay"
-      @click="listenSensor(sensor)"
-      >Play</b-button
-    >
+    <p v-if="needAudio">{{ playSound ? "Is playing" : "Stopped" }}</p>
 
     <input
       type="file"
@@ -17,7 +11,7 @@
     <b-button v-if="canPlay" @click="updateSensor('audio' + index)"
       >Update audio</b-button
     >
-    <b-button v-else @click="updateSensor('audio' + index)">Add audio</b-button>
+    <b-button v-else @click="updateSensor('audio' + index)">{{ !needAudio ? 'Add audio' : 'Update audio '}}</b-button>
   </div>
 </template>
 
@@ -33,6 +27,12 @@ export default {
     },
     index: {
       type: Number
+    },
+    playSound: {
+      type: Boolean
+    },
+    needAudio: {
+      type: Boolean
     }
   },
   data() {
@@ -82,18 +82,35 @@ export default {
         this.canPlay = false;
       }
     },
-    async listenSensor() {
+    async listenSensor(justOne) {
       this.source = this.audioContext.createBufferSource();
       this.source.buffer = this.decodedAudio;
       this.source.connect(this.audioContext.destination);
-      // source.loop = true;
+      this.source.loop = true;
       this.source.start(0);
+    },
+    stopSensor() {
+      if (this.source) {
+        this.source.stop();
+      }
     }
   },
   watch: {
     sensor: {
       handler(val, oldVal) {
-        console.log("Prop changed: ", val, " | was: ", oldVal);
+        this.initAudio();
+      },
+      deep: true,
+      immediate: true
+    },
+    playSound: {
+      handler(val) {
+        if (val) {
+          console.log("play");
+          this.listenSensor();
+        } else {
+          this.stopSensor();
+        }
       },
       deep: true,
       immediate: true
